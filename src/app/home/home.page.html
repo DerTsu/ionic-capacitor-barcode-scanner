@@ -1,19 +1,71 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title> Barcode Scanner </ion-title>
+    <ion-title>
+      QR Map
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-item *ngFor="let barcode of barcodes">
-      <ion-label position="stacked">{{ barcode.format }}</ion-label>
-      <ion-input type="text" [value]="barcode.rawValue"></ion-input>
+<ion-content class="ion-padding">
+
+  <ion-card *ngIf="locations.length == 0">
+    <ion-card-header>
+      <ion-card-title>¡Bienvenido!</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      Realiza 4 lecturas del código QR en diferentes posiciones para ganar un premio.
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="locations.length == 4">
+    <ion-card-header>
+      <ion-card-title>¡Ganaste!</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      Felicidades, completaste las 4 lecturas del código QR.
+    </ion-card-content>
+
+    <ion-button expand="block" color="success" (click)="redirectToUrl()">Reclamar premio</ion-button>
+    <ion-button expand="block" (click)="generateRoute()" *ngIf="locations.length >= 4">Ver ruta en Google Maps</ion-button>
+
+  </ion-card>
+
+
+  <!--<ion-button expand="block" (click)="getCurrentLocation()" *ngIf="locations.length < 4">Obtener Ubicación</ion-button>-->
+  <!--<ion-button expand="block" (click)="generateRoute()" *ngIf="locations.length >= 4">Ver Ruta en Google Maps</ion-button>-->
+
+  <ion-list *ngIf="locations.length > 0">
+    <ion-item *ngFor="let location of locations">
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Registro: {{ location.position }}</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+          <ion-note>Hora: {{ location.time }}</ion-note>
+          <ion-note>Latitud: {{ location.latitude }}, Longitud: {{ location.longitude }}</ion-note>
+        </ion-card-content>
+      </ion-card>
+      
     </ion-item>
   </ion-list>
+
+  <!-- <ion-button expand="block" color="danger" (click)="clearLocalStorage()">Vaciar LocalStorage</ion-button>-->
+
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="scan()" [disabled]="!isSupported">
+    <ion-fab-button (click)="getCurrentLocation()" *ngIf="locations.length < 4" [disabled]="!isSupported">
       <ion-icon name="scan"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+  
+  <ion-fab slot="fixed" vertical="bottom" horizontal="start">
+    <ion-fab-button color="danger" (click)="clearLocalStorage()" [disabled]="!isSupported">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+
 </ion-content>
